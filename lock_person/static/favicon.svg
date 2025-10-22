@@ -1,0 +1,19 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        path {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke: #121212; /* Color por defecto para tema claro */
+        }
+        @media (prefers-color-scheme: dark) {
+            path {
+                stroke: #ffffff; /* Color para tema oscuro */
+            }
+        }
+    </style>
+    <path d="M50 10 L15 30 V 70 L50 90 L85 70 V 30 Z"/>
+    <path d="M35 40 V 60 H 50"/>
+    <path d="M50 40 H 60 C 70 40 70 50 60 50 H 50"/>
+</svg>
