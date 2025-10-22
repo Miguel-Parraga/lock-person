@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lock Person</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        html, body {
+            height: 100%;
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Este nuevo contenedor centrará el contenido verticalmente */
+        #main-content {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .navbar {
+            background-color: #1f1f1f;
+            flex-shrink: 0; /* Evita que la barra de navegación se encoja */
+        }
+
+        /* Esto evita que "Lock Person" se parta en dos líneas */
+        .navbar-brand {
+            white-space: nowrap;
+        }
+
+        .card {
+            background-color: #1e1e1e;
+            border: 1px solid #2c2c2c;
+        }
+
+        .btn-primary {
+            background-color: #6a1b9a;
+            border-color: #6a1b9a;
+        }
+
+        .btn-primary:hover {
+            background-color: #310b38;
+            border-color: #310b38;
+        }
+
+        .form-control {
+            background-color: #2c2c2c;
+            color: #ffffff;
+            border: 1px solid #3c3c3c;
+        }
+
+        .form-control:focus {
+            background-color: #2c2c2c;
+            color: #ffffff;
+            border-color: #6a1b9a;
+            box-shadow: 0 0 0 0.2rem rgba(106, 27, 154, 0.25);
+        }
+
+        a {
+            color: #9c27b0;
+        }
+
+        a:hover {
+            color: #7b1fa2;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('main.index') }}">
+                <svg width="30" height="30" class="mr-2" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M50 10 L15 30 V 70 L50 90 L85 70 V 30 Z"/>
+                    <path d="M35 40 V 60 H 50"/>
+                    <path d="M50 40 H 60 C 70 40 70 50 60 50 H 50"/>
+                </svg>
+                Lock Person
+            </a>
+            <div class="navbar-nav ml-auto">
+                {% if current_user.is_authenticated %}
+                <a class="nav-item nav-link" href="{{ url_for('main.profile') }}">Perfil</a>
+                <a class="nav-item nav-link" href="{{ url_for('auth.logout') }}">Cerrar Sesión</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenedor principal para centrar el contenido -->
+    <div id="main-content">
+        <div class="container">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="alert alert-danger">
+                {{ messages[0] }}
+            </div>
+            {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</body>
+
+</html>
