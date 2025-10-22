@@ -13,7 +13,14 @@
                     </div>
                     <div class="form-group">
                         <label for="password">Contraseña</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="password" name="password" required>
+                            <div class="input-group-append">
+                                <span class="input-group-text" onclick="togglePasswordVisibility()">
+                                    <i class="fa fa-eye" id="toggleIcon"></i>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="remember" name="remember">
@@ -25,4 +32,38 @@
         </div>
     </div>
 </div>
+
+{# Este script se encarga de mostrar/ocultar la contraseña #}
+<script>
+function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.getElementById('toggleIcon');
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
+</script>
+
+{# Este bloque captura los mensajes de Flask y los muestra con SweetAlert #}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Error de autenticación',
+        text: '{{ messages[0] }}',
+        background: '#1e1e1e', // Color del fondo de la tarjeta
+        color: '#ffffff', // Color del texto
+        confirmButtonColor: '#4a148c' // Color del botón principal
+    });
+</script>
+{% endif %}
+{% endwith %}
+
 {% endblock %}

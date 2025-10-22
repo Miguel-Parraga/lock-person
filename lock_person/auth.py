@@ -1,8 +1,7 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required
 from .models import User
-from . import db
 
 auth = Blueprint('auth', __name__)
 
@@ -16,12 +15,14 @@ def login_post():
     password = request.form.get('password')
     remember = True if request.form.get('remember') else False
 
-    user = User.query.filter_by(email=email).first()
+    user_data = current_app.db.users.find_one({'email': email})
 
-    if not user or not check_password_hash(user.password, password):
-        flash('Please check your login details and try again.')
+    # It's better not to reveal if the email exists or not for security reasons
+    if not user_data or not check_password_hash(user_data['password'], password):
+        flash('Los datos de inicio de sesión son incorrectos. Por favor, inténtalo de nuevo.')
         return redirect(url_for('auth.login'))
 
+    user = User(user_data)
     login_user(user, remember=remember)
     return redirect(url_for('main.profile'))
 
@@ -35,16 +36,19 @@ def signup_post():
     name = request.form.get('name')
     password = request.form.get('password')
 
-    user = User.query.filter_by(email=email).first()
+    user_data = current_app.db.users.find_one({'email': email})
 
-    if user:
-        flash('Email address already exists')
+    if user_data:
+        flash('La dirección de correo electrónico ya está registrada.')
         return redirect(url_for('auth.signup'))
 
-    new_user = User(email=email, name=name, password=generate_password_hash(password, method='pbkdf2:sha256'))
+    new_user = {
+        'email': email,
+        'name': name,
+        'password': generate_password_hash(password, method='pbkdf2:sha256')
+    }
 
-    db.session.add(new_user)
-    db.session.commit()
+    current_app.db.users.insert_one(new_user)
 
     return redirect(url_for('auth.login'))
 
