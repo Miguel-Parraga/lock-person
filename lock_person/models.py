@@ -7,6 +7,8 @@ class User(UserMixin):
         self.email = user_data['email']
         self.password_hash = user_data['password']
         self.name = user_data['name']
+        # Añadimos el atributo de rol. Si no existe, por defecto es 'user'.
+        self.role = user_data.get('role', 'user')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -16,3 +18,7 @@ class User(UserMixin):
 
     def is_active(self):
         return True
+
+    # Método para comprobar fácilmente si el usuario es administrador
+    def is_admin(self):
+        return self.role == 'admin'

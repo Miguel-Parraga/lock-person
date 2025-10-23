@@ -42,10 +42,12 @@ def signup_post():
         flash('La dirección de correo electrónico ya está registrada.')
         return redirect(url_for('auth.signup'))
 
+    # Añadimos el rol por defecto al registrar un nuevo usuario
     new_user = {
         'email': email,
         'name': name,
-        'password': generate_password_hash(password, method='pbkdf2:sha256')
+        'password': generate_password_hash(password, method='pbkdf2:sha256'),
+        'role': 'user'
     }
 
     current_app.db.users.insert_one(new_user)

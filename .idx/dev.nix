@@ -4,7 +4,6 @@
     pkgs.python3
     pkgs.mongodb
   ];
-  services.mongodb.enable = true;
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [ "ms-python.python" ];
@@ -16,6 +15,9 @@
         # Open editors for the following files by default, if they exist:
         default.openFiles = [ "README.md" "src/index.html" "main.py" ];
       }; # To run something each time the workspace is (re)started, use the `onStart` hook
+      onStart = {
+        mongodb = "mkdir -p .mongodb && mongod --dbpath .mongodb --fork --logpath .mongodb/mongod.log";
+      };
     };
     # Enable previews and customize configuration
     previews = {
@@ -23,6 +25,7 @@
       previews = {
         web = {
           command = [ "./devserver.sh" ];
+          manager = "web";
           env = { PORT = "$PORT"; };
         };
       };

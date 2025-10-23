@@ -1,4 +1,9 @@
 # Notas de Desarrollo y Observaciones
+- Registro de usuario de user a admin: python promote_user.py TU_EMAIL@EJEMPLO.COM(reemplazar con correo de usuario)
+- activacion de entorno virtual: source .venv/bin/activate
+
+
+
 
 ## Observación Pendiente: Comportamiento de SweetAlert2
 

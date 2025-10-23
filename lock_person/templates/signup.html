@@ -50,17 +50,14 @@ function togglePasswordVisibility() {
 }
 </script>
 
-{# Este bloque captura los mensajes de Flask y los muestra con SweetAlert #}
+{# Este bloque captura los mensajes de Flask y los muestra con la alerta global #}
 {% with messages = get_flashed_messages() %}
 {% if messages %}
 <script>
-    Swal.fire({
+    AppSwal.fire({
         icon: 'error',
         title: 'Error de registro',
-        text: '{{ messages[0] }}',
-        background: '#1e1e1e', // Color del fondo de la tarjeta
-        color: '#ffffff', // Color del texto
-        confirmButtonColor: '#4a148c' // Color del botón principal
+        text: '{{ messages[0] }}'
     });
 </script>
 {% endif %}

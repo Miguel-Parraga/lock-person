@@ -15,6 +15,16 @@
     <!-- SweetAlert2 para notificaciones bonitas -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <!-- Configuración global para todas las alertas de la aplicación -->
+    <script>
+        const AppSwal = Swal.mixin({
+            heightAuto: false,
+            background: '#1e1e1e',
+            color: '#ffffff',
+            confirmButtonColor: '#4a148c'
+        });
+    </script>
+
     <style>
         html, body {
             height: 100%;
@@ -91,13 +101,14 @@
         a:hover {
             color: #7b1fa2;
         }
+
     </style>
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('main.index') }}">
+            <a id="home-link" class="navbar-brand d-flex align-items-center" href="{{ url_for('main.index') }}">
                 <svg width="30" height="30" class="mr-2" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M50 10 L15 30 V 70 L50 90 L85 70 V 30 Z"/>
                     <path d="M35 40 V 60 H 50"/>
@@ -107,8 +118,12 @@
             </a>
             <div class="navbar-nav ml-auto">
                 {% if current_user.is_authenticated %}
-                <a class="nav-item nav-link" href="{{ url_for('main.profile') }}">Perfil</a>
-                <a class="nav-item nav-link" href="{{ url_for('auth.logout') }}">Cerrar Sesión</a>
+                    {# Este enlace solo aparecerá si el usuario es administrador #}
+                    {% if current_user.is_admin() %}
+                        <a class="nav-item nav-link font-weight-bold text-warning" href="{{ url_for('main.users_list') }}">Admin</a>
+                    {% endif %}
+                    <a class="nav-item nav-link" href="{{ url_for('main.profile') }}">Perfil</a>
+                    <a class="nav-item nav-link" href="{{ url_for('auth.logout') }}">Cerrar Sesión</a>
                 {% endif %}
             </div>
         </div>
@@ -120,6 +135,34 @@
             {% block content %}{% endblock %}
         </div>
     </div>
+
+    {% if current_user.is_authenticated %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const homeLink = document.getElementById('home-link');
+
+            if (homeLink) {
+                homeLink.addEventListener('click', function(event) {
+                    event.preventDefault();
+
+                    AppSwal.fire({
+                        title: '¿Deseas salir?',
+                        text: "Estás regresando al menú principal. Para continuar, tu sesión se cerrará.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, cerrar sesión',
+                        cancelButtonText: 'No, quedarme aquí',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "{{ url_for('auth.logout') }}";
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+    {% endif %}
 </body>
 
 </html>
