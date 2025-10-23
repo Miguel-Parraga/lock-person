@@ -1,60 +1,63 @@
-
 # Lock Person - Documentación Técnica
 
 ## 1. Resumen del Proyecto
 
-**Lock Person** es una aplicación web construida con Python y el micro-framework Flask. El objetivo principal hasta la fecha ha sido establecer un sistema de autenticación de usuarios robusto, seguro y con una interfaz de usuario moderna y amigable.
+**Lock Person** es una aplicación web construida con Python y Flask, diseñada como una plataforma modular. El núcleo de la aplicación es un sistema de autenticación seguro que da paso a un panel de control personalizado desde donde los usuarios pueden acceder a diferentes módulos funcionales.
 
-La aplicación utiliza una estructura basada en **Blueprints** para modularizar el código, separando la lógica de autenticación de las rutas principales de la aplicación.
+La arquitectura se basa en **Blueprints** para una clara separación de responsabilidades y utiliza una base de datos **MongoDB** para el almacenamiento de datos, gestionada a través de la aplicación.
 
 ## 2. Estructura del Proyecto
 
 ```
 lock_person/
-|-- __init__.py       # Inicializa la aplicación Flask y las extensiones.
-|-- auth.py           # Blueprint para rutas de autenticación (/login, /signup, /logout).
-|-- db.py             # Configuración de la base de datos (actualmente SQLite).
-|-- main.py           # Blueprint para las rutas principales (/, /profile).
-|-- models.py         # Define los modelos de la base de datos (ej. User).
-|-- static/           # Archivos estáticos (CSS, JS, imágenes como el favicon).
-|-- templates/        # Plantillas HTML de Jinja2.
-|   |-- base.html     # Plantilla principal con la estructura común.
-|   |-- index.html    # Página de inicio.
-|   |-- login.html    # Formulario de inicio de sesión.
-|   |-- profile.html  # Página de perfil de usuario.
-|   `-- signup.html   # Formulario de registro.
-`-- extensions.py     # Inicialización de extensiones de Flask (ej. LoginManager).
+|-- __init__.py         # Fábrica de la aplicación. Inicializa Flask y las extensiones.
+|-- auth.py             # Blueprint para rutas de autenticación (/login, /signup, /logout).
+|-- main.py             # Blueprint para las rutas principales (/, /profile, /admin/users).
+|-- models.py           # Define el modelo de datos `User` para Flask-Login.
+|-- static/             # Archivos estáticos.
+|   |-- css/            # Hojas de estilo locales (Bootstrap, Font Awesome).
+|   |-- js/             # Scripts locales (SweetAlert2).
+|   `-- favicon.svg     # Ícono de la aplicación.
+|-- templates/          # Plantillas HTML de Jinja2.
+|   |-- base.html       # Plantilla principal con la estructura y navegación común.
+|   |-- index.html      # Página de inicio para visitantes.
+|   |-- login.html      # Formulario de inicio de sesión.
+|   |-- profile.html    # Panel de control del usuario con módulos.
+|   |-- signup.html     # Formulario de registro.
+|   `-- users_list.html # Tabla de administración de usuarios.
+|-- extensions.py       # Inicialización de extensiones (LoginManager).
+|-- promote_user.py     # Script para dar permisos de administrador a un usuario.
+|-- NOTAS.md            # Notas de desarrollo y tareas pendientes.
+`-- DOCUMENTACION.md    # Este mismo archivo.
 ```
 
-## 3. Sistema de Autenticación
+## 3. Sistema de Autenticación y Roles
 
-- **Registro (`/signup`):** Permite a los nuevos usuarios crear una cuenta. Las contraseñas se hashean de forma segura utilizando `werkzeug.security` antes de guardarlas en la base de datos.
-- **Inicio de Sesión (`/login`):** Valida las credenciales del usuario y gestiona las sesiones a través de la extensión `Flask-Login`.
-- **Gestión de Sesiones:** Se utiliza `Flask-Login` para recordar a los usuarios autenticados y proteger las rutas que requieren inicio de sesión.
-- **Traducción:** Todos los mensajes de error y notificaciones de cara al usuario han sido traducidos al español para una mejor experiencia local.
+- **Registro y Login:** Formularios para crear cuentas e iniciar sesión. Las contraseñas se hashean con `werkzeug.security`.
+- **Gestión de Sesión:** Se utiliza `Flask-Login` para manejar las sesiones de usuario.
+- **Roles de Usuario:**
+    - **`user` (usuario):** Rol por defecto. Puede acceder a su perfil y a los módulos generales.
+    - **`admin` (administrador):** Tiene permisos elevados. Puede acceder a paneles especiales como la lista de usuarios.
+    - El script `promote_user.py` permite elevar el rol de un usuario a `admin` desde la línea de comandos.
+- **Protección de Rutas:**
+    - Rutas como `/profile` o `/admin/users` están protegidas y requieren inicio de sesión.
+    - Las páginas públicas (`/`, `/login`, `/signup`) redirigen automáticamente al perfil si el usuario ya ha iniciado sesión, evitando flujos confusos.
 
-## 4. Mejoras en la Interfaz de Usuario (UI/UX)
+## 4. Interfaz de Usuario y Experiencia (UI/UX)
 
-Se ha puesto especial atención en crear una interfaz moderna y funcional.
+Se ha puesto un gran énfasis en una experiencia de usuario fluida y moderna.
 
-- **Diseño Oscuro (Dark Mode):** Se ha implementado un tema oscuro consistente en toda la aplicación utilizando **Bootstrap** y estilos CSS personalizados.
-- **Visualizador de Contraseña:** 
-    - En los formularios de registro e inicio de sesión, se ha añadido un icono de un **ojo** junto al campo de la contraseña.
-    - Este icono, importado de **Font Awesome**, permite al usuario hacer clic para mostrar u ocultar la contraseña que está escribiendo, mejorando la usabilidad y reduciendo errores de tipeo.
-    - El icono ha sido estilizado para ser blanco y visible en el tema oscuro.
-- **Notificaciones Modernas con SweetAlert2:**
-    - Se ha reemplazado el sistema de mensajes `flash` por defecto de Flask por notificaciones emergentes de la librería **SweetAlert2**.
-    - Estas alertas (ej. "Contraseña incorrecta", "El correo ya está registrado") son más visuales, interactivas y se han estilizado para integrarse perfectamente con el diseño oscuro de la aplicación.
+- **Tema Oscuro:** La aplicación completa utiliza un diseño oscuro (dark mode) para mayor comodidad visual.
+- **Panel de Control en Perfil:** La página `/profile` actúa como un **panel de control central**. En lugar de una simple bienvenida, presenta una cuadrícula de botones modulares que sirven como puntos de entrada a las diferentes funcionalidades de la aplicación.
+- **Navegación Centralizada:** El acceso a funciones clave, como el panel de administración, se ha movido desde la barra de navegación superior al panel de control del perfil, creando un único y claro punto de partida.
+- **Notificaciones con SweetAlert2:** Se usan alertas emergentes estilizadas para todos los mensajes de la aplicación (éxito, error, confirmación), mejorando la comunicación con el usuario.
+- **Mejoras de Usabilidad:** Se han incluido detalles como un botón para visualizar la contraseña en los formularios, facilitando el proceso de registro e inicio de sesión.
 
-## 5. Dependencias
+## 5. Rendimiento y Optimización
 
-### Back-End (Python)
-- **Flask:** El framework principal.
-- **Flask-Login:** Para la gestión de sesiones de usuario.
-- **Werkzeug:** Para el hasheo seguro de contraseñas.
-- **SQLAlchemy & Flask-SQLAlchemy:** Para la interacción con la base de datos.
+- **Recursos Locales:** Todas las librerías de frontend (Bootstrap, Font Awesome, SweetAlert2) se sirven desde la carpeta `static/` de la propia aplicación. Esto **elimina peticiones a servidores externos (CDNs)**, resultando en tiempos de carga significativamente más rápidos y permitiendo que la aplicación funcione en entornos con conectividad limitada.
 
-### Front-End
-- **Bootstrap:** Para el diseño responsive y la estructura de los componentes.
-- **Font Awesome:** Para el uso de iconos vectoriales (ej. el ojo).
-- **SweetAlert2:** Para las notificaciones y alertas personalizadas.
+## 6. Dependencias Principales
+
+- **Back-End:** Flask, Flask-Login, Werkzeug, pymongo.
+- **Front-End:** Bootstrap, Font Awesome, SweetAlert2.

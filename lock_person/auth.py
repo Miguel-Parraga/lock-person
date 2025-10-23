@@ -1,12 +1,15 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 from .models import User
 
 auth = Blueprint('auth', __name__)
 
 @auth.route('/login')
 def login():
+    # Si el usuario ya ha iniciado sesión, redirigir a la página de perfil
+    if current_user.is_authenticated:
+        return redirect(url_for('main.profile'))
     return render_template('login.html')
 
 @auth.route('/login', methods=['POST'])
@@ -17,7 +20,6 @@ def login_post():
 
     user_data = current_app.db.users.find_one({'email': email})
 
-    # It's better not to reveal if the email exists or not for security reasons
     if not user_data or not check_password_hash(user_data['password'], password):
         flash('Los datos de inicio de sesión son incorrectos. Por favor, inténtalo de nuevo.')
         return redirect(url_for('auth.login'))
@@ -28,6 +30,9 @@ def login_post():
 
 @auth.route('/signup')
 def signup():
+    # Si el usuario ya ha iniciado sesión, redirigir a la página de perfil
+    if current_user.is_authenticated:
+        return redirect(url_for('main.profile'))
     return render_template('signup.html')
 
 @auth.route('/signup', methods=['POST'])
@@ -42,7 +47,6 @@ def signup_post():
         flash('La dirección de correo electrónico ya está registrada.')
         return redirect(url_for('auth.signup'))
 
-    # Añadimos el rol por defecto al registrar un nuevo usuario
     new_user = {
         'email': email,
         'name': name,

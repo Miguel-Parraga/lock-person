@@ -119,10 +119,6 @@
             </a>
             <div class="navbar-nav ml-auto">
                 {% if current_user.is_authenticated %}
-                    {# Este enlace solo aparecerá si el usuario es administrador #}
-                    {% if current_user.is_admin() %}
-                        <a class="nav-item nav-link font-weight-bold text-warning" href="{{ url_for('main.users_list') }}">Admin</a>
-                    {% endif %}
                     <a class="nav-item nav-link" href="{{ url_for('main.profile') }}">Perfil</a>
                     <a class="nav-item nav-link" href="{{ url_for('auth.logout') }}">Cerrar Sesión</a>
                 {% endif %}

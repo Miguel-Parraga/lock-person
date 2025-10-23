@@ -1,24 +1,23 @@
-# Notas de Desarrollo y Observaciones
-- Registro de usuario de user a admin: python promote_user.py TU_EMAIL@EJEMPLO.COM(reemplazar con correo de usuario)
-- activacion de entorno virtual: source .venv/bin/activate
+# Notas de Desarrollo y Tareas Pendientes
 
+## Comandos Útiles
 
-
-
-## Observación Pendiente: Comportamiento de SweetAlert2
-
-**Descripción del Problema:**
-
-*(Por favor, explica aquí el comportamiento inesperado que has notado con las alertas de SweetAlert2. Por ejemplo: ¿La alerta no aparece, aparece en un momento incorrecto, no tiene el estilo esperado, interfiere con alguna otra acción?)*
-
-**Pasos para Reproducirlo:**
-
-1.  ...
-2.  ...
-3.  ...
-
-**Comportamiento Esperado:**
-
-*(Describe lo que debería pasar si todo funcionara correctamente.)*
+- **Activar entorno virtual:** `source .venv/bin/activate`
+- **Convertir un usuario en administrador:** `python promote_user.py TU_EMAIL@EJEMPLO.COM` (reemplazar con el correo del usuario)
 
 ---
+
+## Tareas de Diseño y UX
+
+- **[ ] Cambiar el ícono del botón "Admin"**: Buscar y asignar un ícono más representativo y visualmente atractivo para el módulo de administración en la página de perfil. El ícono actual de base de datos es provisional.
+
+---
+
+## Próximos Módulos
+
+- **[ ] Módulo de Registro de Hábitos Diarios**: Desarrollar la funcionalidad para que los usuarios puedan registrar sus hábitos diarios. Esto incluirá:
+    - Creación del modelo de datos para los hábitos.
+    - Diseño de la interfaz para el registro diario.
+    - Lógica del backend para almacenar los datos.
+    - Preparación de los datos para futuras visualizaciones (gráficas).
+
