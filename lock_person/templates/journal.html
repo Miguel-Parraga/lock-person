@@ -1,130 +1,172 @@
 {% extends "base.html" %}
 
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css">
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid">
-    <h1 class="text-center my-4">Mi Bullet Journal</h1>
-
-    <!-- Controles de Navegación de Mes -->
-    <div class="row justify-content-center mb-4">
-        <div class="col-auto">
-            <button class="btn btn-outline-primary"><i class="fas fa-chevron-left"></i> Mes Anterior</button>
-        </div>
-        <div class="col-auto">
-            <h2 id="current-month-year">{{ current_month_name }} {{ current_year }}</h2>
-        </div>
-        <div class="col-auto">
-            <button class="btn btn-outline-primary">Mes Siguiente <i class="fas fa-chevron-right"></i></button>
+    <div class="row mb-4">
+        <div class="col-12">
+            <button id="date-picker-trigger" class="btn btn-outline-light btn-lg mb-2"></button>
+            <input type="text" id="mantra-input" class="form-control form-control-lg bg-transparent border-0 text-white-50 pl-0" placeholder="🎯 Mi Mantra del Mes...">
         </div>
     </div>
-
-    <hr>
-
-    <!-- Sección Principal: Gráfico y Future Log -->
-    <div class="row">
-        <!-- Columna del Gráfico -->
+    <hr class="hr-purple">
+    <div class="row mt-4">
+        <div class="col-12">
+            <h4>Registro de Eventos</h4>
+            <div id="daily-events-container" class="custom-scrollbar" style="max-height: 400px; overflow-y: auto; padding-right: 15px;"></div>
+        </div>
+    </div>
+    <hr class="hr-purple">
+    <div class="row mt-4">
         <div class="col-lg-6 mb-4">
             <h4>Progreso de Hábitos</h4>
             <canvas id="habits-chart"></canvas>
         </div>
-
-        <!-- Columna del Future Log -->
         <div class="col-lg-6">
-            <h4>Future Log</h4>
-            <div id="future-log-container" style="max-height: 400px; overflow-y: auto;">
-                <p class="text-muted">Cargando entradas...</p>
-            </div>
-        </div>
-    </div>
-
-    <hr>
-
-    <!-- Sección del Tracker de Hábitos -->
-    <div class="row mt-4">
-        <div class="col-12">
             <h4>Tracker de Hábitos</h4>
-            
             <form id="add-habit-form" class="form-inline mb-3">
-                <div class="form-group">
-                    <input type="text" id="habit-name-input" class="form-control" placeholder="Nombre del nuevo hábito" required>
-                </div>
-                <button type="submit" class="btn btn-primary ml-2">Añadir Hábito</button>
+                <div class="form-group flex-grow-1"><input type="text" id="habit-name-input" class="form-control w-100" placeholder="Nombre del nuevo hábito" required></div>
+                <button type="submit" class="btn btn-primary ml-2">Añadir</button>
             </form>
-
-            <div id="habits-tracker-container" class="table-responsive">
-                {% if habits %}
-                <table class="table table-bordered table-dark table-sm">
-                    <thead>
-                        <tr>
-                            <th class="habit-name-col">Hábito</th>
-                            {% for day in days %}
-                                <th class="text-center">{{ day }}</th>
-                            {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for habit in habits %}
-                        <tr>
-                            <td>{{ habit.name }}</td>
-                            {% for day in days %}
-                                <td class="text-center">
-                                    <!-- Checkbox para el seguimiento -->
-                                    <input type="checkbox" class="habit-checkbox">
-                                </td>
-                            {% endfor %}
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% else %}
-                <p class="text-muted text-center">Aún no has añadido ningún hábito. ¡Añade uno para empezar!</p>
-                {% endif %}
-            </div>
+            <div id="habits-tracker-container" class="table-responsive custom-scrollbar" style="max-height: 300px; overflow-y: auto; padding-right: 15px;"></div>
         </div>
     </div>
 </div>
 
 <style>
-.habit-name-col { min-width: 150px; }
-.table-dark.table-bordered { border-color: #454d55; }
+/* (Estilos sin cambios) */
+.hr-purple{border:0;height:1px;background-image:linear-gradient(to right,rgba(156,39,176,0),rgba(156,39,176,.75),rgba(156,39,176,0));margin:2rem 0}#date-picker-trigger:hover{background-color:rgba(255,255,255,.1)}input[type=checkbox].habit-checkbox{-webkit-appearance:none;appearance:none;background-color:#343a40;border:1px solid #6c757d;width:1.25em;height:1.25em;border-radius:.25em;cursor:pointer;position:relative}input[type=checkbox].habit-checkbox:checked{background-color:#9c27b0;border-color:#9c27b0}input[type=checkbox].habit-checkbox:checked::after{content:'\2713';color:#fff;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:.8em}html{scrollbar-width:thin;scrollbar-color:#495057 #212529}html::-webkit-scrollbar{width:8px}html::-webkit-scrollbar-track{background:#212529}html::-webkit-scrollbar-thumb{background-color:#495057;border-radius:4px}html::-webkit-scrollbar-thumb:hover{background:#6c757d}
 </style>
 
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const addHabitForm = document.getElementById('add-habit-form');
-    const habitNameInput = document.getElementById('habit-name-input');
 
-    addHabitForm.addEventListener('submit', function(event) {
+    const datePickerTrigger = document.getElementById('date-picker-trigger');
+    const habitsTrackerContainer = document.getElementById('habits-tracker-container');
+    const dailyEventsContainer = document.getElementById('daily-events-container');
+    let fp, currentYear, currentMonth; // Hacemos accesibles globalmente en el script
+
+    // --- RENDERIZACIÓN DINÁMICA ---
+    function renderHabitsTable(habits, days, trackingData) {
+        let tableHTML = `<table class="table table-bordered table-dark table-sm" id="habits-table"><thead><tr><th class="habit-name-col">Hábito</th>`;
+        days.forEach(day => { tableHTML += `<th class="text-center day-col">${day}</th>`; });
+        tableHTML += `</tr></thead><tbody>`;
+
+        if (habits.length > 0) {
+            habits.forEach(habit => {
+                tableHTML += `<tr data-habit-id="${habit._id}"><td>${habit.name}</td>`;
+                days.forEach(day => {
+                    const isChecked = trackingData[habit._id] && trackingData[habit._id].includes(day) ? 'checked' : '';
+                    tableHTML += `<td class="text-center"><input type="checkbox" class="habit-checkbox" data-day="${day}" ${isChecked}></td>`;
+                });
+                tableHTML += `</tr>`;
+            });
+        } 
+        tableHTML += `</tbody></table>`;
+        if (habits.length === 0) {
+             tableHTML += `<p id="no-habits-message" class="text-muted text-center">Aún no has añadido ningún hábito.</p>`;
+        }
+        habitsTrackerContainer.innerHTML = tableHTML;
+    }
+
+    function renderDailyEvents(days) {
+        let eventsHTML = '';
+        days.forEach(day => {
+            eventsHTML += `<div class="input-group mb-2"><div class="input-group-prepend"><span class="input-group-text" style="width: 50px;">${day}</span></div><textarea class="form-control bg-dark text-white" rows="2" placeholder="Anota tus eventos..."></textarea></div>`;
+        });
+        dailyEventsContainer.innerHTML = eventsHTML;
+    }
+
+    // --- LÓGICA DE DATOS Y FECHA ---
+    function updateJournalView(date) {
+        currentYear = date.getFullYear();
+        currentMonth = date.getMonth() + 1; // JS es 0-11, Backend es 1-12
+        const monthName = fp.formatDate(date, "F");
+
+        datePickerTrigger.textContent = `${monthName} ${currentYear}`;
+        Swal.fire({ title: `Cargando ${monthName}...`, didOpen: () => { Swal.showLoading() } });
+
+        fetch(`/journal/data?year=${currentYear}&month=${date.getMonth()}`)
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    renderHabitsTable(data.habits, data.days, data.tracking_data);
+                    renderDailyEvents(data.days);
+                    Swal.close();
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudieron cargar los datos.' });
+                }
+            });
+    }
+
+    fp = flatpickr(datePickerTrigger, {
+        locale: { firstDayOfWeek: 1, months: { longhand: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'] } },
+        plugins: [ new monthSelectPlugin({ shorthand: true, dateFormat: "F Y" }) ],
+        defaultDate: new Date(),
+        onChange: (selectedDates) => updateJournalView(selectedDates[0]),
+        onReady: (selectedDates) => updateJournalView(selectedDates[0])
+    });
+
+    // --- GUARDADO DE HÁBITOS (EVENT DELEGATION) ---
+    habitsTrackerContainer.addEventListener('click', function(event) {
+        if (event.target.matches('.habit-checkbox')) {
+            const checkbox = event.target;
+            const habitId = checkbox.closest('tr').dataset.habitId;
+            const day = checkbox.dataset.day;
+            const completed = checkbox.checked;
+
+            fetch('/journal/track', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ habit_id: habitId, year: currentYear, month: currentMonth, day: day, completed: completed })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status !== 'success') {
+                    console.error('Error al guardar el hábito:', data.message);
+                    // Opcional: mostrar un error al usuario
+                }
+            })
+            .catch(err => console.error('Fetch error:', err));
+        }
+    });
+
+    // --- AÑADIR NUEVO HÁBITO ---
+    document.getElementById('add-habit-form').addEventListener('submit', function(event) {
         event.preventDefault();
-        const habitName = habitNameInput.value.trim();
+        const input = document.getElementById('habit-name-input');
+        const habitName = input.value.trim();
         if (!habitName) return;
 
-        fetch('/journal/habit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: habitName })
+        fetch('/journal/habit', { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify({ name: habitName }) 
         })
-        .then(response => response.json())
+        .then(res => res.json())
         .then(data => {
             if (data.status === 'success') {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Hábito añadido!',
-                    showConfirmButton: false,
-                    timer: 1000
-                }).then(() => {
-                    location.reload(); // Recargamos la página para ver el nuevo hábito
-                });
+                input.value = '';
+                Swal.fire({ icon: 'success', title: 'Hábito añadido', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+                // Recargamos la vista para mostrar el nuevo hábito en la tabla
+                updateJournalView(fp.selectedDates[0]);
             } else {
                 Swal.fire({ icon: 'error', title: 'Oops...', text: data.message });
             }
-        })
-        .catch(error => {
-            Swal.fire({ icon: 'error', title: 'Error de Red', text: 'No se pudo conectar con el servidor.' });
         });
     });
 });

@@ -5,73 +5,104 @@ from bson.objectid import ObjectId
 import datetime
 import calendar
 
-# --- Rutas de la Interfaz de Usuario (UI) ---
+# --- Ruta de la Interfaz de Usuario (UI) ---
 
 @bullet_journal_bp.route('/journal')
 @login_required
-def journal():
+def journal_ui():
     """
-    Muestra la página principal del Bullet Journal, cargando todos los datos
-    necesarios para el mes actual.
+    Renderiza la página principal del Journal. El frontend se encarga
+    de solicitar los datos dinámicamente a la API.
     """
+    return render_template('journal.html')
+
+# --- Rutas de la API (para llamadas desde JavaScript) ---
+
+@bullet_journal_bp.route('/journal/data', methods=['GET'])
+@login_required
+def get_journal_data():
     db = current_app.db
     user_id = ObjectId(current_user.id)
 
-    # 1. Determinar el mes y año actual
-    # Nota: Más adelante, esto se leerá de los argumentos de la solicitud para la navegación
-    now = datetime.datetime.utcnow()
-    year, month = now.year, now.month
-    month_name = now.strftime("%B")
+    try:
+        # Esperamos el mes como 1-12, consistente con el frontend
+        year = int(request.args.get('year', datetime.datetime.utcnow().year))
+        month = int(request.args.get('month', datetime.datetime.utcnow().month))
+    except (ValueError, TypeError):
+        now = datetime.datetime.utcnow()
+        year, month = now.year, now.month
 
-    # 2. Obtener los días del mes
+    month_name = calendar.month_name[month]
     _, num_days = calendar.monthrange(year, month)
-    days_in_month = range(1, num_days + 1)
+    days_in_month = list(range(1, num_days + 1))
 
-    # 3. Obtener los hábitos del usuario
     habits_cursor = db.habits.find({"user_id": user_id})
-    habits = list(habits_cursor)
+    habits = []
+    for habit in habits_cursor:
+        habit['_id'] = str(habit['_id'])
+        habits.append(habit)
 
-    # 4. Obtener los datos de seguimiento (tracking) para el mes actual
-    # (Lo implementaremos en el siguiente paso)
+    start_date = datetime.datetime(year, month, 1)
+    end_date = datetime.datetime(year, month, num_days, 23, 59, 59)
+    tracking_cursor = db.habit_tracking.find({
+        "user_id": user_id,
+        "date": {"$gte": start_date, "$lte": end_date}
+    })
+    
     tracking_data = {}
+    for record in tracking_cursor:
+        habit_id = str(record['habit_id'])
+        if habit_id not in tracking_data:
+            tracking_data[habit_id] = []
+        tracking_data[habit_id].append(record['date'].day)
 
-    # 5. Obtener las entradas del diario (Future Log) para el mes actual
-    # (Lo implementaremos en el siguiente paso)
-    daily_entries = {}
-
-    return render_template('journal.html', 
-                           habits=habits, 
-                           days=days_in_month,
-                           current_month_name=month_name,
-                           current_year=year,
-                           tracking_data=tracking_data, # Datos vacíos por ahora
-                           daily_entries=daily_entries) # Datos vacíos por ahora
-
-# --- Rutas de la API (para llamadas desde JavaScript) ---
+    return jsonify({
+        'status': 'success',
+        'year': year,
+        'month': month, 
+        'month_name': month_name,
+        'days': days_in_month,
+        'habits': habits,
+        'tracking_data': tracking_data
+    })
 
 @bullet_journal_bp.route('/journal/habit', methods=['POST'])
 @login_required
 def add_habit():
-    """
-    API endpoint para crear un nuevo hábito.
-    """
     data = request.get_json()
-    if not data or 'name' not in data:
-        return jsonify({'status': 'error', 'message': 'El nombre del hábito es requerido.'}), 400
-
-    habit_name = data['name'].strip()
-    if not habit_name:
+    if not data or 'name' not in data or not data['name'].strip():
         return jsonify({'status': 'error', 'message': 'El nombre del hábito no puede estar vacío.'}), 400
 
     db = current_app.db
     new_habit = {
-        "name": habit_name,
+        "name": data['name'].strip(),
         "user_id": ObjectId(current_user.id)
     }
     result = db.habits.insert_one(new_habit)
-
     return jsonify({
         'status': 'success', 
-        'message': 'Hábito añadido correctamente.', 
+        'message': 'Hábito añadido.', 
         'habit_id': str(result.inserted_id)
     }), 201
+
+@bullet_journal_bp.route('/journal/track', methods=['POST'])
+@login_required
+def track_habit():
+    data = request.get_json()
+    db = current_app.db
+
+    try:
+        habit_id = ObjectId(data['habit_id'])
+        date_obj = datetime.datetime(int(data['year']), int(data['month']), int(data['day']))
+        completed = bool(data['completed'])
+    except (KeyError, ValueError, TypeError):
+        return jsonify({'status': 'error', 'message': 'Datos inválidos.'}), 400
+
+    query = {"habit_id": habit_id, "user_id": ObjectId(current_user.id), "date": date_obj}
+
+    if completed:
+        db.habit_tracking.update_one(query, {"$set": {"completed": True}}, upsert=True)
+        return jsonify({'status': 'success', 'action': 'tracked'})
+    else:
+        db.habit_tracking.delete_one(query)
+        return jsonify({'status': 'success', 'action': 'untracked'})
