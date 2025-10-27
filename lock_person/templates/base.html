@@ -9,11 +9,12 @@
     <!-- Ícono para la pestaña del navegador -->
     <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
 
-    <!-- Archivos CSS locales para mayor velocidad -->
+    <!-- Archivos CSS locales -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <!-- **CORRECCIÓN DEFINITIVA:** Usando el archivo local de Font Awesome -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/all.min.css') }}">
     
-    <!-- SweetAlert2 para notificaciones bonitas (desde archivo local) -->
+    <!-- SweetAlert2 para notificaciones (desde archivo local) -->
     <script src="{{ url_for('static', filename='js/sweetalert2.all.min.js') }}"></script>
 
     <!-- Configuración global para todas las alertas de la aplicación -->
@@ -31,7 +32,7 @@
             height: 100%;
             background-color: #121212;
             color: #ffffff;
-            overflow-x: hidden; /* Previene el desbordamiento horizontal */
+            overflow-x: hidden;
         }
 
         body {
@@ -83,14 +84,12 @@
             box-shadow: 0 0 0 0.2rem rgba(106, 27, 154, 0.25);
         }
 
-        /* Ajustes para el icono en el campo de contraseña */
         .input-group-text {
             background-color: #2c2c2c;
             border: 1px solid #3c3c3c;
             cursor: pointer;
         }
         
-        /* ¡Haciendo el icono del ojo más blanquito! */
         .input-group-text i {
             color: #ffffff;
         }
@@ -101,6 +100,15 @@
 
         a:hover {
             color: #7b1fa2;
+        }
+
+        .logout-icon {
+            color: rgba(255, 255, 255, 0.55);
+            transition: color 0.2s ease-in-out;
+        }
+
+        .logout-icon:hover {
+            color: rgba(255, 255, 255, 0.85);
         }
 
     </style>
@@ -117,10 +125,12 @@
                 </svg>
                 Lock Person
             </a>
-            <div class="navbar-nav ml-auto">
+            <div class="navbar-nav ml-auto d-flex flex-row align-items-center">
                 {% if current_user.is_authenticated %}
-                    <a class="nav-item nav-link" href="{{ url_for('main.profile') }}">Perfil</a>
-                    <a class="nav-item nav-link" href="{{ url_for('auth.logout') }}">Cerrar Sesión</a>
+                    <a class="nav-item nav-link mr-3" href="{{ url_for('main.profile') }}">{{ current_user.name }}</a>
+                    <a id="logout-link" class="nav-item nav-link logout-icon" href="{{ url_for('auth.logout') }}" title="Cerrar Sesión">
+                        <i class="fas fa-sign-out-alt fa-lg"></i>
+                    </a>
                 {% endif %}
             </div>
         </div>
@@ -128,7 +138,6 @@
 
     <div id="main-content">
         <div class="container">
-            <!-- El bloque de mensajes de error de Bootstrap se quitará de las plantillas de login y signup -->
             {% block content %}{% endblock %}
         </div>
     </div>
@@ -136,23 +145,42 @@
     {% if current_user.is_authenticated %}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Lógica para el link del logo principal
             const homeLink = document.getElementById('home-link');
-
             if (homeLink) {
                 homeLink.addEventListener('click', function(event) {
                     event.preventDefault();
-
                     AppSwal.fire({
                         title: '¿Deseas salir?',
-                        text: "Estás regresando al menú principal. Para continuar, tu sesión se cerrará.",
+                        text: "Estás regresando al menú principal y tu sesión se cerrará.",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonText: 'Sí, cerrar sesión',
-                        cancelButtonText: 'No, quedarme aquí',
+                        cancelButtonText: 'No, quedarme',
                         reverseButtons: true
                     }).then((result) => {
                         if (result.isConfirmed) {
                             window.location.href = "{{ url_for('auth.logout') }}";
+                        }
+                    });
+                });
+            }
+
+            // Lógica para el nuevo ícono de cerrar sesión
+            const logoutLink = document.getElementById('logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(event) {
+                    event.preventDefault(); // Previene la redirección inmediata
+                    AppSwal.fire({
+                        title: '¿Deseas cerrar sesión?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, salir',
+                        cancelButtonText: 'Cancelar',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = logoutLink.href; // Redirige si el usuario confirma
                         }
                     });
                 });
