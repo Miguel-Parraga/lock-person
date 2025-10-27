@@ -45,4 +45,8 @@ def create_app():
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
+    # Blueprint para el módulo de Bullet Journal
+    from .bullet_journal import bullet_journal_bp
+    app.register_blueprint(bullet_journal_bp)
+
     return app

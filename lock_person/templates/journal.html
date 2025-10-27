@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="text-center my-4">Mi Bullet Journal</h1>
+
+    <!-- Controles de Navegación de Mes -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-auto">
+            <button class="btn btn-outline-primary"><i class="fas fa-chevron-left"></i> Mes Anterior</button>
+        </div>
+        <div class="col-auto">
+            <h2 id="current-month-year">{{ current_month_name }} {{ current_year }}</h2>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-outline-primary">Mes Siguiente <i class="fas fa-chevron-right"></i></button>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- Sección Principal: Gráfico y Future Log -->
+    <div class="row">
+        <!-- Columna del Gráfico -->
+        <div class="col-lg-6 mb-4">
+            <h4>Progreso de Hábitos</h4>
+            <canvas id="habits-chart"></canvas>
+        </div>
+
+        <!-- Columna del Future Log -->
+        <div class="col-lg-6">
+            <h4>Future Log</h4>
+            <div id="future-log-container" style="max-height: 400px; overflow-y: auto;">
+                <p class="text-muted">Cargando entradas...</p>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- Sección del Tracker de Hábitos -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <h4>Tracker de Hábitos</h4>
+            
+            <form id="add-habit-form" class="form-inline mb-3">
+                <div class="form-group">
+                    <input type="text" id="habit-name-input" class="form-control" placeholder="Nombre del nuevo hábito" required>
+                </div>
+                <button type="submit" class="btn btn-primary ml-2">Añadir Hábito</button>
+            </form>
+
+            <div id="habits-tracker-container" class="table-responsive">
+                {% if habits %}
+                <table class="table table-bordered table-dark table-sm">
+                    <thead>
+                        <tr>
+                            <th class="habit-name-col">Hábito</th>
+                            {% for day in days %}
+                                <th class="text-center">{{ day }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for habit in habits %}
+                        <tr>
+                            <td>{{ habit.name }}</td>
+                            {% for day in days %}
+                                <td class="text-center">
+                                    <!-- Checkbox para el seguimiento -->
+                                    <input type="checkbox" class="habit-checkbox">
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted text-center">Aún no has añadido ningún hábito. ¡Añade uno para empezar!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.habit-name-col { min-width: 150px; }
+.table-dark.table-bordered { border-color: #454d55; }
+</style>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addHabitForm = document.getElementById('add-habit-form');
+    const habitNameInput = document.getElementById('habit-name-input');
+
+    addHabitForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const habitName = habitNameInput.value.trim();
+        if (!habitName) return;
+
+        fetch('/journal/habit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: habitName })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Hábito añadido!',
+                    showConfirmButton: false,
+                    timer: 1000
+                }).then(() => {
+                    location.reload(); // Recargamos la página para ver el nuevo hábito
+                });
+            } else {
+                Swal.fire({ icon: 'error', title: 'Oops...', text: data.message });
+            }
+        })
+        .catch(error => {
+            Swal.fire({ icon: 'error', title: 'Error de Red', text: 'No se pudo conectar con el servidor.' });
+        });
+    });
+});
+</script>
+{% endblock %}
