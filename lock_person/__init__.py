@@ -1,52 +1,44 @@
 from flask import Flask
-from flask_login import LoginManager
-from pymongo import MongoClient
+from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from dotenv import load_dotenv
 import os
-from bson.objectid import ObjectId
 
 load_dotenv()
+
+# Initialize SQLAlchemy so it can be imported in other files
+db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
 
-    app.config['SECRET_KEY'] = 'your_secret_key'  # Change this!
+    # --- CORS Configuration ---
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
-    mongo_uri = os.getenv("MONGO_URI")
-    db_name = os.getenv("DB_NAME")
+    # --- Database Configuration ---
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", 'your_secret_key')
 
-    client = MongoClient(mongo_uri)
-    app.db = client[db_name]
+    # Initialize the database with the Flask app
+    db.init_app(app)
 
-    login_manager = LoginManager()
-    login_manager.login_view = 'auth.login'
-    login_manager.login_message = "Por favor, inicia sesión para acceder a esta página."
-    login_manager.init_app(app)
+    # --- Blueprints ---
+    with app.app_context():
+        # Import and register blueprints
+        from .auth import auth as auth_blueprint
+        app.register_blueprint(auth_blueprint)
 
-    from .models import User
+        from .main import main as main_blueprint
+        app.register_blueprint(main_blueprint)
 
-    @login_manager.user_loader
-    def load_user(user_id):
-        try:
-            # Convert user_id string to ObjectId before querying
-            user_data = app.db.users.find_one({"_id": ObjectId(user_id)})
-        except Exception:
-            return None # Handle invalid ObjectId format
-            
-        if user_data:
-            return User(user_data)
-        return None
+        from .bullet_journal import bullet_journal_bp
+        app.register_blueprint(bullet_journal_bp)
+        
+        # We need to import the models so that create_all knows about them
+        from . import models
 
-    # blueprint for auth routes in our app
-    from .auth import auth as auth_blueprint
-    app.register_blueprint(auth_blueprint)
-
-    # blueprint for non-auth parts of app
-    from .main import main as main_blueprint
-    app.register_blueprint(main_blueprint)
-
-    # Blueprint para el módulo de Bullet Journal
-    from .bullet_journal import bullet_journal_bp
-    app.register_blueprint(bullet_journal_bp)
+        # Create all database tables
+        db.create_all()
 
     return app

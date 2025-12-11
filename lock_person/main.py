@@ -1,31 +1,31 @@
-from flask import Blueprint, render_template, current_app, abort, redirect, url_for
-from flask_login import login_required, current_user
+from flask import Blueprint, jsonify, g
+from .decorators import token_required
 
 main = Blueprint('main', __name__)
 
 @main.route('/')
 def index():
-    # Si el usuario ya ha iniciado sesión, redirigir a la página de perfil
-    if current_user.is_authenticated:
-        return redirect(url_for('main.profile'))
-    return render_template('index.html')
+    """
+    Endpoint principal de la API.
+    """
+    return jsonify({'status': 'success', 'message': 'Bienvenido a la API de Lock-Person.'})
 
 @main.route('/profile')
-@login_required
+@token_required
 def profile():
-    return render_template('profile.html', name=current_user.name)
-
-@main.route('/admin/users')
-@login_required
-def users_list():
     """
-    Ruta protegida para mostrar una lista de todos los usuarios registrados.
-    Solo accesible para usuarios administradores.
+    Endpoint para obtener el perfil del usuario autenticado.
+    El decorador @token_required se encarga de la autenticación
+    y de adjuntar el usuario a g.current_user.
     """
-    if not current_user.is_admin():
-        abort(403)
-
-    users_cursor = current_app.db.users.find()
-    all_users = list(users_cursor)
+    # g.current_user es establecido por el decorador token_required
+    user = g.current_user
     
-    return render_template('users_list.html', users=all_users, title="Admin - Lista de Usuarios")
+    return jsonify({
+        'status': 'success',
+        'user': {
+            'id': user.id,
+            'name': user.name,
+            'email': user.email
+        }
+    })

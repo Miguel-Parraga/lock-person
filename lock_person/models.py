@@ -1,14 +1,20 @@
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from . import db  # Importa la instancia de SQLAlchemy
 
-class User(UserMixin):
-    def __init__(self, user_data):
-        self.id = str(user_data['_id'])
-        self.email = user_data['email']
-        self.password_hash = user_data['password']
-        self.name = user_data['name']
-        # Añadimos el atributo de rol. Si no existe, por defecto es 'user'.
-        self.role = user_data.get('role', 'user')
+class User(UserMixin, db.Model):
+    __tablename__ = 'users'
+
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    role = db.Column(db.String(10), nullable=False, default='user')
+
+    # Relaciones con otros modelos
+    habits = db.relationship('Habit', backref='user', lazy=True, cascade="all, delete-orphan")
+    daily_entries = db.relationship('DailyEntry', backref='user', lazy=True, cascade="all, delete-orphan")
+    habit_trackings = db.relationship('HabitTracking', backref='user', lazy=True, cascade="all, delete-orphan")
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -16,44 +22,35 @@ class User(UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def is_active(self):
-        return True
-
-    # Método para comprobar fácilmente si el usuario es administrador
     def is_admin(self):
         return self.role == 'admin'
 
-# --- Modelos para el Bullet Journal ---
+class Habit(db.Model):
+    __tablename__ = 'habits'
 
-class Habit:
-    """
-    Representa un hábito individual que un usuario quiere seguir.
-    Cada usuario tendrá su propia lista de hábitos.
-    """
-    def __init__(self, name, user_id, id=None):
-        self.id = id
-        self.name = name
-        self.user_id = user_id
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-class DailyEntry:
-    """
-    Representa la entrada de texto de un diario para un día específico.
-    Corresponde a las notas del 'Future Log'.
-    """
-    def __init__(self, date, content, user_id, id=None):
-        self.id = id
-        self.date = date
-        self.content = content
-        self.user_id = user_id
+    # Relación con el seguimiento de hábitos
+    trackings = db.relationship('HabitTracking', backref='habit', lazy=True, cascade="all, delete-orphan")
 
-class HabitTracking:
-    """
-    Representa el estado (completado o no) de un hábito en una fecha concreta.
-    Es el 'check' que se hace en la tabla de seguimiento.
-    """
-    def __init__(self, date, completed, habit_id, user_id, id=None):
-        self.id = id
-        self.date = date
-        self.completed = completed
-        self.habit_id = habit_id
-        self.user_id = user_id
+class DailyEntry(db.Model):
+    __tablename__ = 'daily_entries'
+
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.Date, nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+class HabitTracking(db.Model):
+    __tablename__ = 'habit_trackings'
+
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.Date, nullable=False)
+    completed = db.Column(db.Boolean, nullable=False, default=False)
+    habit_id = db.Column(db.Integer, db.ForeignKey('habits.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    # Restricción para evitar entradas duplicadas
+    __table_args__ = (db.UniqueConstraint('date', 'habit_id', 'user_id', name='_date_habit_user_uc'),)

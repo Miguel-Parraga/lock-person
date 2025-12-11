@@ -1,4 +1,6 @@
 Flask
-Flask-Login
-pymongo
 python-dotenv
+Flask-SQLAlchemy
+psycopg2-binary
+Flask-Cors
+PyJWT
