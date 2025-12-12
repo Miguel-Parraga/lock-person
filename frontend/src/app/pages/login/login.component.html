@@ -1,0 +1,106 @@
+<div class="container-fluid px-0">
+    <div class="min-vh-100 d-flex align-items-center justify-content-center px-3" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);">
+        <div class="row justify-content-center w-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card welcome-container border-0 shadow-lg">
+            <div class="card-body p-4 p-md-5">
+                <h3 class="card-title text-center mb-4">
+                <span class="display-6 fw-bold gradient-text">Iniciar Sesión</span>
+                </h3>
+                
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <!-- Campo Email -->
+                <div class="mb-4">
+                    <label for="email" class="form-label text-white text-opacity-75 mb-2">
+                    <i class="fas fa-envelope me-2"></i>Correo electrónico
+                    </label>
+                    <input 
+                    type="email" 
+                    class="form-control form-control-lg border-light bg-dark bg-opacity-25 text-white" 
+                    id="email" 
+                    formControlName="email"
+                    [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+                    placeholder="tucorreo@ejemplo.com"
+                    required
+                    >
+                    @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+                    <div class="invalid-feedback d-block">
+                        <i class="fas fa-exclamation-circle me-1"></i>Correo electrónico inválido
+                    </div>
+                    }
+                </div>
+
+                <!-- Campo Contraseña -->
+                <div class="mb-4">
+                    <label for="password" class="form-label text-white text-opacity-75 mb-2">
+                    <i class="fas fa-lock me-2"></i>Contraseña
+                    </label>
+                    <div class="input-group">
+                    <input 
+                        [type]="showPassword ? 'text' : 'password'" 
+                        class="form-control form-control-lg border-light bg-dark bg-opacity-25 text-white" 
+                        id="password" 
+                        formControlName="password"
+                        [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+                        placeholder="Ingresa tu contraseña"
+                        required
+                    >
+                    <button 
+                        class="btn btn-outline-light border-light bg-dark bg-opacity-25" 
+                        type="button" 
+                        (click)="togglePasswordVisibility()"
+                    >
+                        <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+                    </button>
+                    </div>
+                    @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+                    <div class="invalid-feedback d-block">
+                        <i class="fas fa-exclamation-circle me-1"></i>La contraseña es requerida
+                    </div>
+                    }
+                </div>
+
+                <!-- Recordar usuario -->
+                <div class="mb-4 form-check">
+                    <input 
+                    type="checkbox" 
+                    class="form-check-input" 
+                    id="remember" 
+                    formControlName="remember"
+                    >
+                    <label class="form-check-label text-white text-opacity-75" for="remember">
+                    Recuérdame
+                    </label>
+                </div>
+
+                <!-- Botón de envío -->
+                <button 
+                    type="submit" 
+                    class="btn btn-primary btn-lg w-100 rounded-pill py-3 mt-2"
+                    [disabled]="loginForm.invalid || isLoading"
+                >
+                    @if (isLoading) {
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                    }
+                    <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                </button>
+
+                <!-- Enlaces adicionales -->
+                <div class="text-center mt-4">
+                    <a routerLink="/forgot-password" class="text-white text-opacity-75 text-decoration-none small">
+                    <i class="fas fa-key me-1"></i>¿Olvidaste tu contraseña?
+                    </a>
+                    <div class="mt-2">
+                    <span class="text-white text-opacity-75 small">¿No tienes cuenta? </span>
+                    <a routerLink="/signup" class="text-decoration-none fw-bold">
+                        <span class="gradient-text">Regístrate aquí</span>
+                    </a>
+                    </div>
+                </div>
+                </form>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>

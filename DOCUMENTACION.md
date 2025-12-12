@@ -9,26 +9,33 @@ La arquitectura se basa en **Blueprints** para una clara separación de responsa
 ## 2. Estructura del Proyecto
 
 ```
-lock_person/
-|-- __init__.py         # Fábrica de la aplicación. Inicializa Flask y las extensiones.
-|-- auth.py             # Blueprint para rutas de autenticación (/login, /signup, /logout).
-|-- main.py             # Blueprint para las rutas principales (/, /profile, /admin/users).
-|-- models.py           # Define el modelo de datos `User` para Flask-Login.
-|-- static/             # Archivos estáticos.
-|   |-- css/            # Hojas de estilo locales (Bootstrap, Font Awesome).
-|   |-- js/             # Scripts locales (SweetAlert2).
-|   `-- favicon.svg     # Ícono de la aplicación.
-|-- templates/          # Plantillas HTML de Jinja2.
-|   |-- base.html       # Plantilla principal con la estructura y navegación común.
-|   |-- index.html      # Página de inicio para visitantes.
-|   |-- login.html      # Formulario de inicio de sesión.
-|   |-- profile.html    # Panel de control del usuario con módulos.
-|   |-- signup.html     # Formulario de registro.
-|   `-- users_list.html # Tabla de administración de usuarios.
-|-- extensions.py       # Inicialización de extensiones (LoginManager).
-|-- promote_user.py     # Script para dar permisos de administrador a un usuario.
-|-- NOTAS.md            # Notas de desarrollo y tareas pendientes.
-`-- DOCUMENTACION.md    # Este mismo archivo.
+lock-person/
+├── backend/           # Aplicación Python
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── auth.py
+│   │   ├── decorators.py
+│   │   ├── models.py
+│   │   ├── routes.py
+│   │   └── ...
+│   ├── templates/     # ELIMINAR o mover a frontend (ya no se usa)
+│   ├── static/        # ELIMINAR (Angular maneja los estáticos)
+│   ├── requirements.txt
+│   ├── run.py
+│   └── ...
+├── frontend/          # Aplicación Angular
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── components/
+│   │   │   ├── pages/
+│   │   │   ├── services/    # AÑADIR para API calls
+│   │   │   ├── models/      # AÑADIR para TypeScript interfaces
+│   │   │   └── ...
+│   │   ├── assets/
+│   │   └── ...
+│   ├── angular.json
+│   └── package.json
+└── README.md
 ```
 
 ## 3. Sistema de Autenticación y Roles

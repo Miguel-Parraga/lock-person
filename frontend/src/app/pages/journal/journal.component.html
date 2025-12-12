@@ -1,0 +1,85 @@
+<div class="container-fluid">
+  <div class="row mb-4">
+    <div class="col-12">
+      <button id="date-picker-trigger" class="btn btn-outline-light btn-lg mb-2"></button>
+      <input type="text" id="mantra-input" class="form-control form-control-lg bg-transparent border-0 text-white-50 pl-0" 
+             placeholder="🎯 Mi Mantra del Mes..." [(ngModel)]="mantra">
+    </div>
+  </div>
+  
+  <hr class="hr-purple">
+  
+  <div class="row mt-4">
+    <div class="col-12">
+      <h4>Registro de Eventos</h4>
+      <div id="daily-events-container" class="custom-scrollbar" style="max-height: 400px; overflow-y: auto; padding-right: 15px;">
+        @for (day of days; track day) {
+          <div class="input-group mb-2">
+            <div class="input-group-prepend">
+              <span class="input-group-text" style="width: 50px;">{{ day }}</span>
+            </div>
+            <textarea class="form-control bg-dark text-white" rows="2" 
+                      placeholder="Anota tus eventos..." [(ngModel)]="dailyEvents[day]"></textarea>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+  
+  <hr class="hr-purple">
+  
+  <div class="row mt-4">
+    <div class="col-lg-6 mb-4">
+      <h4>Progreso de Hábitos</h4>
+      <canvas id="habits-chart"></canvas>
+    </div>
+    
+    <div class="col-lg-6">
+      <h4>Tracker de Hábitos</h4>
+      
+      <form id="add-habit-form" class="form-inline mb-3" (ngSubmit)="addHabit()">
+        <div class="form-group flex-grow-1">
+          <input type="text" id="habit-name-input" class="form-control w-100" 
+                 placeholder="Nombre del nuevo hábito" [(ngModel)]="newHabitName" name="habitName" required>
+        </div>
+        <button type="submit" class="btn btn-primary ml-2">Añadir</button>
+      </form>
+      
+      <div id="habits-tracker-container" class="table-responsive custom-scrollbar" 
+           style="max-height: 300px; overflow-y: auto; padding-right: 15px;">
+        <table class="table table-bordered table-dark table-sm" id="habits-table">
+          <thead>
+            <tr>
+              <th class="habit-name-col">Hábito</th>
+              @for (day of days; track day) {
+                <th class="text-center day-col">{{ day }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (habit of habits; track habit.id) {
+              <tr [attr.data-habit-id]="habit.id">
+                <td>{{ habit.name }}</td>
+                @for (day of days; track day) {
+                  <td class="text-center">
+                    <input type="checkbox" class="habit-checkbox" 
+                           [attr.data-day]="day" 
+                           [checked]="isHabitChecked(habit.id, day)"
+                           (change)="toggleHabit(habit.id, day, $event)">
+                  </td>
+                }
+              </tr>
+            }
+            @if (habits.length === 0) {
+              <tr>
+                <td [attr.colspan]="days.length + 1" class="text-center text-muted">
+                  Aún no has añadido ningún hábito.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

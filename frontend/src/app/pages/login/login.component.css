@@ -1,0 +1,137 @@
+/* login.component.css */
+
+/* Removemos el estilo del host para evitar conflictos */
+:host {
+  display: block;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Contenedor principal con efectos visuales (igual que home) */
+.welcome-container {
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 1rem !important;
+}
+
+/* Efecto de gradiente en el título */
+.gradient-text {
+  background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+/* Estilos para los inputs */
+.form-control {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  border-radius: 0.5rem !important;
+}
+
+.form-control:focus {
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  color: white !important;
+  box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Placeholder de inputs */
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Estilos para el checkbox */
+.form-check-input {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.form-check-input:checked {
+  background-color: #591764;
+  border-color: #591764;
+}
+
+/* Estilos para el botón de mostrar contraseña */
+.btn-outline-light {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Enlaces con efecto hover */
+a:hover {
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+/* Botón de login con los mismos estilos que home */
+.btn-primary {
+  background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+  border: none;
+  transition: all 0.3s ease;
+  border-radius: 2rem !important;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(106, 17, 203, 0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 2rem 1.5rem !important;
+  }
+  
+  .display-6 {
+    font-size: 2rem;
+  }
+  
+  .form-control-lg {
+    font-size: 1rem;
+    padding: 0.75rem 1rem !important;
+  }
+  
+  .min-vh-100 {
+    min-height: 100vh !important;
+    padding: 1rem 0 !important;
+  }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 576px) {
+  .card-body {
+    padding: 1.5rem 1rem !important;
+  }
+  
+  .display-6 {
+    font-size: 1.75rem;
+  }
+  
+  .btn-lg {
+    padding: 0.75rem 1.5rem !important;
+    font-size: 1rem !important;
+  }
+}
+
+/* Asegurar que no haya márgenes o paddings no deseados */
+.container-fluid {
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: 100% !important;
+}
+
+.row {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lock Person</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Flatpickr (para el journal) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+    
+    <!-- Configuración global de SweetAlert -->
+    <script>
+      const AppSwal = Swal.mixin({
+        heightAuto: false,
+        background: '#1e1e1e',
+        color: '#ffffff',
+        confirmButtonColor: '#4a148c'
+      });
+      
+      // Configuración global para logout
+      function confirmLogout(event, logoutUrl) {
+        event.preventDefault();
+        AppSwal.fire({
+          title: '¿Deseas cerrar sesión?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Sí, salir',
+          cancelButtonText: 'Cancelar',
+          reverseButtons: true
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Aquí irá la lógica de logout con Angular
+            window.location.href = logoutUrl;
+          }
+        });
+        return false;
+      }
+    </script>
+  </head>
+
+  <body>
+    <app-root></app-root>
+    
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+  
+</html>

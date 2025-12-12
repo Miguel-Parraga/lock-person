@@ -1,0 +1,22 @@
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" routerLink="/" id="home-link">
+      <svg width="30" height="30" class="mr-2" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" 
+           fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M50 10 L15 30 V 70 L50 90 L85 70 V 30 Z"/>
+        <path d="M35 40 V 60 H 50"/>
+        <path d="M50 40 H 60 C 70 40 70 50 60 50 H 50"/>
+      </svg>
+      Lock Person
+    </a>
+    
+    <div class="navbar-nav ml-auto d-flex flex-row align-items-center">
+      @if (isAuthenticated) {
+        <a class="nav-item nav-link mr-3" routerLink="/profile">{{ userName }}</a>
+        <a class="nav-item nav-link logout-icon" (click)="confirmLogout()" title="Cerrar Sesión" id="logout-link">
+          <i class="fas fa-sign-out-alt fa-lg"></i>
+        </a>
+      }
+    </div>
+  </div>
+</nav>

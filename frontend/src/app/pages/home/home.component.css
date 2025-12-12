@@ -1,0 +1,55 @@
+/* Estilos mínimos necesarios - complementan Bootstrap */
+
+/* Fondo de la página */
+:host {
+  display: block;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+/* Contenedor principal con efectos visuales */
+.welcome-container {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Efecto de gradiente en el título */
+.display-4 {
+  background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Estilos específicos para el botón de Registrarse */
+.btn-register {
+  background-color: #591764;
+  border-color: #591764;
+  color: white;
+}
+
+
+.btn-register:hover {
+  background-color: #781b88;
+  border-color: #781b88;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(120, 27, 136, 0.4);
+}
+
+/* Efecto hover para ambos botones */
+.btn-primary:hover, .btn-register:hover {
+  transition: all 0.3s ease;
+}
+
+/* Ajustes responsivos adicionales */
+@media (max-width: 768px) {
+  .welcome-container {
+    padding: 2rem 1.5rem !important;
+  }
+  
+  .display-4 {
+    font-size: 2.5rem;
+  }
+}

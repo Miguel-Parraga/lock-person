@@ -1,0 +1,15 @@
+{
+  "name": "lock-person",
+  "version": "1.0.0",
+  "scripts": {
+    "frontend": "cd frontend && ng serve --host 0.0.0.0 --port 4200",
+    "frontend:dev": "cd frontend && ng serve",
+    "frontend:build": "cd frontend && ng build",
+    "backend": "cd backend && npm start",
+    "install:all": "cd frontend && npm install && cd ../backend && npm install",
+    "start": "concurrently \"npm run frontend\" \"npm run backend\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
