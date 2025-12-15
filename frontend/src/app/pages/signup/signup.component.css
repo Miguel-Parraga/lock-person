@@ -1,0 +1,175 @@
+/* signup.component.css */
+
+/* Estilos base iguales a login.component.css */
+:host {
+  display: block;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Fondo de la página */
+:host ::ng-deep {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+/* Contenedor principal con efectos visuales */
+.welcome-container {
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 1rem !important;
+}
+
+/* Efecto de gradiente en el título y enlaces */
+.gradient-text {
+  background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+/* Estilo para texto blanco con opacidad */
+.text-white-75 {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+/* Estilos para los inputs */
+.form-control {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  border-radius: 0.5rem !important;
+}
+
+.form-control:focus {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  color: white !important;
+  box-shadow: 0 0 0 0.25rem rgba(106, 17, 203, 0.25) !important;
+}
+
+/* Placeholder de inputs */
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Estilos para el checkbox */
+.form-check-input {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.form-check-input:checked {
+  background-color: #6a11cb;
+  border-color: #6a11cb;
+}
+
+/* Estilos para el botón de mostrar contraseña */
+.btn-outline-light {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: white !important;
+}
+
+/* Botón de registro */
+.btn-primary {
+  background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+  border: none;
+  transition: all 0.3s ease;
+  border-radius: 2rem !important;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(106, 17, 203, 0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Enlaces dentro del checkbox de términos */
+.form-check-label a {
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.form-check-label a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* Enlaces generales */
+a {
+  transition: all 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 2rem 1.5rem !important;
+  }
+  
+  .display-6 {
+    font-size: 2rem !important;
+  }
+  
+  .min-vh-100 {
+    min-height: 100vh !important;
+    padding: 1rem 0 !important;
+  }
+  
+  .form-check {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 576px) {
+  .card-body {
+    padding: 1.5rem 1rem !important;
+  }
+  
+  .display-6 {
+    font-size: 1.75rem !important;
+  }
+  
+  .btn-lg {
+    padding: 0.75rem 1.5rem !important;
+    font-size: 1rem !important;
+  }
+  
+  .form-control-lg {
+    font-size: 1rem !important;
+    padding: 0.75rem 1rem !important;
+  }
+  
+  .container-fluid > div {
+    padding: 0.5rem !important;
+  }
+  
+  /* Ajustar labels en móviles */
+  .form-label {
+    font-size: 0.95rem;
+  }
+}
+
+/* Para pantallas grandes */
+@media (min-width: 1200px) {
+  .welcome-container {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}

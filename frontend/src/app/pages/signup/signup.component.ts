@@ -6,32 +6,44 @@ import { ReactiveFormsModule } from '@angular/forms';
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent {
-  signupForm: FormGroup;
-  showPassword = false;
-  isLoading = false;
+  registroForm: FormGroup;
+  mostrarPassword = false;  // Sin ñ
+  cargando = false;
 
   constructor(private fb: FormBuilder) {
-    this.signupForm = this.fb.group({
+    this.registroForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      name: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      nombre: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(6)]],  // Sin ñ
+      confirmarPassword: ['', Validators.required],  // Sin ñ
+      terminos: [false, Validators.requiredTrue]
+    }, { 
+      validators: this.validarPasswordsCoinciden 
     });
   }
 
-  togglePasswordVisibility(): void {
-    this.showPassword = !this.showPassword;
+  validarPasswordsCoinciden(g: FormGroup): { [key: string]: boolean } | null {
+    const password = g.get('password')?.value;
+    const confirmar = g.get('confirmarPassword')?.value;
+    
+    return password && confirmar && password === confirmar 
+      ? null 
+      : { 'noCoinciden': true };
+  }
+
+  alternarVisibilidadPassword(): void {
+    this.mostrarPassword = !this.mostrarPassword;
   }
 
   onSubmit(): void {
-    if (this.signupForm.valid) {
-      this.isLoading = true;
-      console.log('Signup data:', this.signupForm.value);
-      // this.authService.signup(this.signupForm.value).subscribe(...)
+    if (this.registroForm.valid) {
+      this.cargando = true;
+      console.log('Datos de registro:', this.registroForm.value);
     }
   }
 }

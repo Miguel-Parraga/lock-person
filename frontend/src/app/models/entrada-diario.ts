@@ -1,4 +1,4 @@
-﻿export interface EntradaDiario {
+export interface EntradaDiario {
   id: number;
   usuarioId: number;
   fecha: Date;

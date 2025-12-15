@@ -1,4 +1,6 @@
-﻿export interface Habito {
+﻿// //frontend/src/app/models/habito.ts
+
+export interface Habito {
   id: number;
   usuarioId: number;
   nombre: string;

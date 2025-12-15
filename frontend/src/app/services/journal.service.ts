@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Habit, JournalDataResponse, TrackHabitRequest } from '../models/habit';
+import { Habito, DatosDiarioResponse, SeguimientoHabitoRequest, CrearHabitoRequest } from '../models/habito';
 
 @Injectable({
   providedIn: 'root'
@@ -11,20 +11,20 @@ export class JournalService {
 
   constructor(private http: HttpClient) {}
 
-  getJournalData(year: number, month: number): Observable<JournalDataResponse> {
-    return this.http.get<JournalDataResponse>(`${this.apiUrl}/data?year=${year}&month=${month}`);
+  getJournalData(year: number, month: number): Observable<DatosDiarioResponse> {
+    return this.http.get<DatosDiarioResponse>(`${this.apiUrl}/data?year=${year}&month=${month}`);
   }
 
-  trackHabit(data: TrackHabitRequest): Observable<any> {
+  trackHabit(data: SeguimientoHabitoRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/track`, data);
   }
 
-  addHabit(habitData: { name: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/habit`, habitData);
+  addHabit(habito: CrearHabitoRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/habits`, habito);
   }
 
-  getHabits(): Observable<Habit[]> {
-    return this.http.get<Habit[]>(`${this.apiUrl}/habits`);
+  getHabits(): Observable<Habito[]> {
+    return this.http.get<Habito[]>(`${this.apiUrl}/habits`);
   }
 
   saveDailyEvents(events: any): Observable<any> {

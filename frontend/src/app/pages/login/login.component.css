@@ -7,7 +7,12 @@
   overflow-x: hidden;
 }
 
-/* Contenedor principal con efectos visuales (igual que home) */
+/* Fondo de la página */
+:host ::ng-deep {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+/* Contenedor principal con efectos visuales */
 .welcome-container {
   background: rgba(255, 255, 255, 0.05) !important;
   backdrop-filter: blur(10px);
@@ -15,7 +20,7 @@
   border-radius: 1rem !important;
 }
 
-/* Efecto de gradiente en el título */
+/* Efecto de gradiente en el título y enlaces */
 .gradient-text {
   background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
   -webkit-background-clip: text;
@@ -24,18 +29,24 @@
   display: inline-block;
 }
 
+/* Estilo para texto blanco con opacidad */
+.text-white-75 {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
 /* Estilos para los inputs */
 .form-control {
+  background-color: rgba(255, 255, 255, 0.05) !important;
   border-color: rgba(255, 255, 255, 0.2) !important;
   color: white !important;
   border-radius: 0.5rem !important;
 }
 
 .form-control:focus {
+  background-color: rgba(255, 255, 255, 0.1) !important;
   border-color: rgba(255, 255, 255, 0.4) !important;
-  background-color: rgba(0, 0, 0, 0.3) !important;
   color: white !important;
-  box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 0 0 0.25rem rgba(106, 17, 203, 0.25) !important;
 }
 
 /* Placeholder de inputs */
@@ -50,27 +61,24 @@
 }
 
 .form-check-input:checked {
-  background-color: #591764;
-  border-color: #591764;
+  background-color: #6a11cb;
+  border-color: #6a11cb;
 }
 
 /* Estilos para el botón de mostrar contraseña */
 .btn-outline-light {
+  background-color: rgba(255, 255, 255, 0.05) !important;
   border-color: rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
 }
 
 .btn-outline-light:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.15) !important;
   border-color: rgba(255, 255, 255, 0.3) !important;
+  color: white !important;
 }
 
-/* Enlaces con efecto hover */
-a:hover {
-  opacity: 0.8;
-  transition: opacity 0.2s;
-}
-
-/* Botón de login con los mismos estilos que home */
+/* Botón de login */
 .btn-primary {
   background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
   border: none;
@@ -85,6 +93,16 @@ a:hover {
 
 .btn-primary:disabled {
   opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Enlaces */
+a {
+  transition: all 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.8;
 }
 
 /* Ajustes responsivos */
@@ -94,17 +112,18 @@ a:hover {
   }
   
   .display-6 {
-    font-size: 2rem;
-  }
-  
-  .form-control-lg {
-    font-size: 1rem;
-    padding: 0.75rem 1rem !important;
+    font-size: 2rem !important;
   }
   
   .min-vh-100 {
     min-height: 100vh !important;
     padding: 1rem 0 !important;
+  }
+  
+  .d-flex.justify-content-between {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 1rem;
   }
 }
 
@@ -115,23 +134,28 @@ a:hover {
   }
   
   .display-6 {
-    font-size: 1.75rem;
+    font-size: 1.75rem !important;
   }
   
   .btn-lg {
     padding: 0.75rem 1.5rem !important;
     font-size: 1rem !important;
   }
+  
+  .form-control-lg {
+    font-size: 1rem !important;
+    padding: 0.75rem 1rem !important;
+  }
+  
+  .container-fluid > div {
+    padding: 0.5rem !important;
+  }
 }
 
-/* Asegurar que no haya márgenes o paddings no deseados */
-.container-fluid {
-  margin: 0 !important;
-  padding: 0 !important;
-  max-width: 100% !important;
-}
-
-.row {
-  margin-left: 0 !important;
-  margin-right: 0 !important;
+/* Para pantallas grandes */
+@media (min-width: 1200px) {
+  .welcome-container {
+    max-width: 500px;
+    margin: 0 auto;
+  }
 }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { User } from '../../models/user';
+import { Usuario } from '../../models/usuario';
 
 declare const AppSwal: any;
 
@@ -23,17 +23,17 @@ export class NavbarComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.authService.currentUser$.subscribe((user: User | null) => {
+    this.authService.currentUser$.subscribe((user: Usuario | null) => {
       this.isAuthenticated = !!user;
       if (user) {
-        this.userName = user.name || user.username || 'Usuario';
+        this.userName = user.nombre || user.email || 'Usuario';
       }
     });
     
     this.isAuthenticated = this.authService.isAuthenticated();
     const currentUser = this.authService.getCurrentUser();
     if (currentUser) {
-      this.userName = currentUser.name || currentUser.username || 'Usuario';
+      this.userName = currentUser.nombre || currentUser.email || 'Usuario';
     }
   }
 

@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { User } from '../models/user';
+import { Usuario } from '../models/usuario';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  private currentUserSubject = new BehaviorSubject<Usuario | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
@@ -32,12 +32,12 @@ export class AuthService {
     this.currentUserSubject.next(null);
   }
 
-  setCurrentUser(user: User): void {
+  setCurrentUser(user: Usuario): void {
     localStorage.setItem('currentUser', JSON.stringify(user));
     this.currentUserSubject.next(user);
   }
 
-  getCurrentUser(): User | null {
+  getCurrentUser(): Usuario | null {
     return this.currentUserSubject.value;
   }
 

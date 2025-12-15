@@ -1,4 +1,6 @@
-﻿import { DataTypes, Model, Optional } from 'sequelize';
+﻿// backend/src/models/Habito.ts
+
+import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from '../config/database';
 
 interface AtributosHabito {
