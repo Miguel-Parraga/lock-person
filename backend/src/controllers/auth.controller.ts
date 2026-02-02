@@ -1,4 +1,4 @@
-﻿// auth.controller.ts - Completo con método perfil
+﻿// auth.controller.ts - CON DEBUGGING
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -50,11 +50,45 @@ export class AuthController {
 
   async registro(req: Request, res: Response) {
     try {
+      // ======= AGREGAR ESTOS CONSOLE.LOG =======
+      console.log('=== 🔍 REGISTRO INICIADO ===');
+      console.log('Body recibido en controller:', req.body);
+      
       const { email, nombre, contraseña } = req.body;
-
-      if (!email || !nombre || !contraseña) {
-        return res.status(400).json({ estado: 'error', mensaje: 'Todos los campos son requeridos' });
+      
+      console.log('Campos extraídos:', { 
+        email, 
+        nombre, 
+        contraseña: contraseña ? 'PRESENTE' : 'AUSENTE' 
+      });
+      
+      // Validación EXPLÍCITA con logs
+      if (!email) {
+        console.log('❌ Falta email');
+        return res.status(400).json({ 
+          estado: 'error', 
+          mensaje: 'El email es requerido' 
+        });
       }
+      
+      if (!nombre) {
+        console.log('❌ Falta nombre');
+        return res.status(400).json({ 
+          estado: 'error', 
+          mensaje: 'El nombre es requerido' 
+        });
+      }
+      
+      if (!contraseña) {
+        console.log('❌ Falta contraseña');
+        return res.status(400).json({ 
+          estado: 'error', 
+          mensaje: 'La contraseña es requerida' 
+        });
+      }
+      
+      console.log('✅ Todos los campos presentes');
+      // ======= FIN DE LOS CONSOLE.LOG =======
 
       const usuarioExistente = await Usuario.findOne({ where: { email } });
       if (usuarioExistente) {
@@ -74,6 +108,8 @@ export class AuthController {
         { expiresIn: '24h' }
       );
 
+      console.log('✅ Usuario creado con ID:', nuevoUsuario.id);  // Este también
+
       res.status(201).json({
         estado: 'success',
         mensaje: 'Usuario registrado',
@@ -86,8 +122,12 @@ export class AuthController {
       });
 
     } catch (error: any) {
-      console.error('Error en registro:', error);
-      res.status(500).json({ estado: 'error', mensaje: error.message });
+      console.error('💥 ERROR en registro:', error);
+      console.error('Stack:', error.stack);  // Agregar stack trace
+      res.status(500).json({ 
+        estado: 'error', 
+        mensaje: 'Error interno: ' + error.message 
+      });
     }
   }
 
