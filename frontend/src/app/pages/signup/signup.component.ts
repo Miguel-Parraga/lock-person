@@ -27,6 +27,39 @@ export class SignupComponent {
     });
   }
 
+  // Método para mostrar errores del formulario
+  mostrarErroresFormulario(): void {
+    console.log('🔍 Revisando errores del formulario:');
+    
+    if (this.registroForm.invalid) {
+      console.log('❌ Formulario INVALIDO');
+    } else {
+      console.log('✅ Formulario VALIDO');
+    }
+    
+    console.log('Estado general:', this.registroForm.status);
+    console.log('Errores del grupo:', this.registroForm.errors);
+    
+    // Revisar cada control individualmente
+    Object.keys(this.registroForm.controls).forEach(key => {
+      const control = this.registroForm.get(key);
+      if (control?.invalid) {
+        console.log(`❌ Campo ${key}:`, {
+          value: control.value,
+          errors: control.errors,
+          valid: control.valid,
+          touched: control.touched,
+          dirty: control.dirty
+        });
+      } else {
+        console.log(`✅ Campo ${key}:`, {
+          value: control?.value,
+          valid: control?.valid
+        });
+      }
+    });
+  }
+
   validarPasswordsCoinciden(g: FormGroup): { [key: string]: boolean } | null {
     const password = g.get('password')?.value;
     const confirmar = g.get('confirmarPassword')?.value;
